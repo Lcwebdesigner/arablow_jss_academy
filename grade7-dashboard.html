@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Grade 7 student dashboard for Arablow Junior School.">
+<title>Grade 7 Student Dashboard | Arablow JSS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="student-page">
+<div class="student-shell">
+<div class="student-header">
+<a href="index.html" class="student-brand">
+<div class="logo-icon">A</div>
+<div><strong>ARABLOW JUNIOR SCHOOL</strong><span>GRADE 7 STUDENT PORTAL</span></div>
+</a>
+<div class="student-top-actions">
+<a href="index.html">Main Website</a>
+<button class="student-logout" id="logoutBtn">Logout</button>
+</div>
+</div>
+
+<section class="dashboard-welcome">
+<span class="section-label light">GRADE 7 DASHBOARD</span>
+<h1>Welcome, <span id="studentName">Student</span>!</h1>
+<p>Student Number: <strong id="studentNumber">—</strong> • Grade: <strong>Grade 7</strong></p>
+</section>
+
+<div class="dashboard-grid">
+<section class="dashboard-panel">
+<h2>Grade 7 Subjects</h2>
+<div class="g7-subject-list">
+<div class="g7-subject"><div><strong>Mathematics</strong><span>Numbers, algebra, geometry & problem solving</span></div><a class="g7-link" href="exam.html?subject=Mathematics&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>English</strong><span>Grammar, comprehension & writing</span></div><a class="g7-link" href="exam.html?subject=English&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>Kiswahili</strong><span>Sarufi, kusoma, kuandika & fasihi</span></div><a class="g7-link" href="exam.html?subject=Kiswahili&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>Integrated Science</strong><span>Living things, matter, energy & health</span></div><a class="g7-link" href="exam.html?subject=Integrated%20Science&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>Social Studies</strong><span>Geography, history, citizenship & society</span></div><a class="g7-link" href="exam.html?subject=Social%20Studies&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>CRE / Religious Education</strong><span>Values, biblical teachings & citizenship</span></div><a class="g7-link" href="exam.html?subject=CRE&grade=Grade%207">Exam →</a></div>
+</div>
+</section>
+
+<section class="dashboard-panel">
+<h2>My Examination Results</h2>
+<div id="resultsList" class="result-empty">No Grade 7 examination has been completed yet. Start a subject examination to see your score here.</div>
+<div class="dashboard-actions" style="margin-top:16px">
+<a class="btn btn-primary" href="exam.html?subject=Mathematics&grade=Grade%207">Take Mathematics Exam</a>
+<a class="btn btn-outline" href="index.html#resources">Learning Resources</a>
+</div>
+</section>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://fyxtkccojxbucbkvvzss.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const admissionNo=localStorage.getItem("arablow_user");
+const studentName=localStorage.getItem("arablow_name")||"Student";
+if(!admissionNo){location.href="login.html";}
+else{
+ document.getElementById("studentName").textContent=studentName;
+ document.getElementById("studentNumber").textContent=admissionNo;
+ loadResults();
+}
+async function loadResults(){
+ const box=document.getElementById("resultsList");
+ const {data:{user}}=await supabaseClient.auth.getUser();
+ if(!user)return;
+ const {data:results,error}=await supabaseClient.from("exam_results").select("subject,score,total_questions,percentage,created_at").eq("student_auth_id",user.id).order("created_at",{ascending:false});
+ if(error||!results||!results.length)return;
+ box.className="";
+ box.innerHTML=results.map(r=>`<div style="padding:12px 0;border-bottom:1px solid #e2e8f0"><strong style="color:#0f172a;font-size:12px">${r.subject}</strong><br><span style="color:#64748b;font-size:10px">${r.score}/${r.total_questions} (${r.percentage}%) • ${new Date(r.created_at).toLocaleDateString()}</span></div>`).join("");
+}
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
+ await supabaseClient.auth.signOut();
+ ["arablow_user","arablow_name","arablow_auth_user_id","arablow_g7_student"].forEach(k=>localStorage.removeItem(k));
+ location.href="login.html";
+});
+</script>
+</body>
+</html>
