@@ -522,7 +522,7 @@ form.addEventListener(
 
 
 </body>
-</html> if(profileError) throw profileError; if(!profile || profile.is_admin !== true) {await supabaseClient.auth.signOut();throw new Error("This account is not authorised for the staff portal.");}
- localStorage.setItem("arablow_admin_name",profile.full_name);localStorage.setItem("arablow_admin_role",profile.role);localStorage.setItem("arablow_admin_auth_user_id",authData.user.id);location.replace("admin-dashboard.html");
+</html>
+arablow_admin_auth_user_id",authData.user.id);location.replace("admin-dashboard.html");
  }catch(err){console.error(err);showError(err.message||"Login failed. Please try again.");button.disabled=false;button.textContent="Login to Admin Portal";}});
 </script></body></html>
