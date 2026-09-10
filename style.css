@@ -61,3 +61,324 @@
 .student-top-actions a{background:var(--primary);color:#fff}.student-logout{border:1px solid var(--border);background:#fff;color:var(--text)}
 @media(max-width:800px){.login-grid,.dashboard-grid{grid-template-columns:1fr}.student-header{align-items:flex-start;flex-direction:column}.student-top-actions{width:100%}}
 @media(max-width:600px){.student-page{padding-top:95px}.student-card,.login-intro,.login-form-card{padding:22px}.login-intro h1{font-size:28px}.dashboard-welcome h1{font-size:25px}}
+
+/* =========================================
+   ABOUT THE MWALIMU
+   ========================================= */
+
+.about-teacher {
+  width: 100%;
+  padding: 90px 28px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.teacher-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  align-items: center;
+  gap: 65px;
+}
+
+/* -----------------------------------------
+   MWALIMU PHOTO
+   ----------------------------------------- */
+
+.teacher-image {
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.teacher-image::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #17617f;
+  border-radius: 26px;
+  top: 14px;
+  left: 14px;
+  z-index: 0;
+}
+
+.teacher-image img {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  aspect-ratio: 4 / 5;
+
+  object-fit: cover;
+  object-position: center top;
+
+  display: block;
+
+  border-radius: 26px;
+  background: #eaf2f5;
+}
+
+/* -----------------------------------------
+   SECTION LABEL
+   ----------------------------------------- */
+
+.about-teacher .section-label {
+  margin: 0 0 17px;
+
+  color: #17617f;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+/* -----------------------------------------
+   MAIN HEADING
+   ----------------------------------------- */
+
+.teacher-content h2 {
+  margin: 0 0 15px;
+
+  color: #101827;
+
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.15;
+
+  letter-spacing: -1px;
+}
+
+/* -----------------------------------------
+   TEACHER NAME
+   ----------------------------------------- */
+
+.teacher-content h3 {
+  margin: 0 0 25px;
+
+  color: #17617f;
+
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* -----------------------------------------
+   BIOGRAPHY
+   ----------------------------------------- */
+
+.teacher-content > p:not(.section-label) {
+  margin: 0 0 20px;
+
+  color: #718096;
+
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+/* -----------------------------------------
+   HIGHLIGHTS
+   ----------------------------------------- */
+
+.teacher-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-top: 30px;
+}
+
+.teacher-highlight {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  padding: 17px 20px;
+
+  background: #f7f9fb;
+
+  border-radius: 12px;
+
+  box-sizing: border-box;
+}
+
+.highlight-number {
+  flex-shrink: 0;
+
+  color: #17617f;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.teacher-highlight strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #172033;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.teacher-highlight p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 900px) {
+
+  .about-teacher {
+    padding: 75px 28px;
+  }
+
+  .teacher-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .teacher-content h2 {
+    font-size: 36px;
+  }
+
+  .teacher-content h3 {
+    font-size: 21px;
+  }
+
+  .teacher-content > p:not(.section-label) {
+    font-size: 16px;
+  }
+
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+
+  .about-teacher {
+    padding: 65px 28px;
+  }
+
+  .teacher-container {
+    display: flex;
+    flex-direction: column;
+
+    gap: 45px;
+
+    align-items: stretch;
+  }
+
+  /* Photo */
+
+  .teacher-image {
+    width: 85%;
+    max-width: 320px;
+
+    margin: 0 auto;
+  }
+
+  .teacher-image::after {
+    top: 10px;
+    left: 10px;
+
+    border-radius: 22px;
+  }
+
+  .teacher-image img {
+    aspect-ratio: 4 / 5;
+
+    border-radius: 22px;
+  }
+
+  /* Text */
+
+  .about-teacher .section-label {
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+
+  .teacher-content h2 {
+    font-size: 34px;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+  }
+
+  .teacher-content h3 {
+    font-size: 21px;
+    margin-bottom: 22px;
+  }
+
+  .teacher-content > p:not(.section-label) {
+    font-size: 16px;
+    line-height: 1.75;
+    margin-bottom: 18px;
+  }
+
+  /* Highlights */
+
+  .teacher-highlights {
+    margin-top: 25px;
+    gap: 10px;
+  }
+
+  .teacher-highlight {
+    padding: 16px;
+    gap: 15px;
+  }
+
+  .teacher-highlight strong {
+    font-size: 15px;
+  }
+
+  .teacher-highlight p {
+    font-size: 13px;
+  }
+
+}
+
+/* =========================================
+   SMALL PHONES
+   ========================================= */
+
+@media (max-width: 400px) {
+
+  .about-teacher {
+    padding: 55px 22px;
+  }
+
+  .teacher-image {
+    width: 90%;
+  }
+
+  .teacher-content h2 {
+    font-size: 30px;
+  }
+
+  .teacher-content h3 {
+    font-size: 19px;
+  }
+
+  .teacher-content > p:not(.section-label) {
+    font-size: 15px;
+  }
+
+}
