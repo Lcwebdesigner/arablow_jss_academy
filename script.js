@@ -1,23 +1,519 @@
-document.addEventListener("DOMContentLoaded",()=>{const menuToggle=document.getElementById("menuToggle"),navbar=document.getElementById("navbar");if(menuToggle&&navbar){menuToggle.addEventListener("click",()=>navbar.classList.toggle("open"));document.querySelectorAll(".nav-link,.nav-contact").forEach(l=>l.addEventListener("click",()=>navbar.classList.remove("open")))}const sections=document.querySelectorAll("main section[id]"),navLinks=document.querySelectorAll(".nav-link");function updateNav(){let current="home";sections.forEach(s=>{if(window.scrollY>=s.offsetTop-150)current=s.id});navLinks.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")===`#${current}`)})}window.addEventListener("scroll",updateNav);updateNav();
-const gradeButtons=document.querySelectorAll(".grade-btn");gradeButtons.forEach(b=>b.addEventListener("click",()=>{gradeButtons.forEach(x=>x.classList.remove("active"));b.classList.add("active");showNotification(`${formatGrade(b.dataset.grade)} subjects selected.`)}));
-const modalOverlay=document.getElementById("modalOverlay"),modalClose=document.getElementById("modalClose"),modalTitle=document.getElementById("modalTitle"),modalText=document.getElementById("modalText"),modalIcon=document.getElementById("modalIcon"),modalResources=document.getElementById("modalResources"),modalExam=document.getElementById("modalExam");const data={"Mathematics":["∑","Study numbers, algebra, geometry, measurement, statistics and mathematical problem solving."],"English":["A","Improve grammar, comprehension, writing, oral communication and literature skills."],"Kiswahili":["K","Jifunze sarufi, kusoma, kuandika, kuzungumza, fasihi na matumizi bora ya Kiswahili."],"Integrated Science":["⚗","Explore living things, matter, energy, health, environment and scientific investigations."],"Social Studies":["🌍","Learn about geography, history, citizenship, culture and society."],"CRE":["✦","Explore Christian religious education, biblical teachings, values and responsible citizenship."],"Agriculture":["🌱","Learn crop production, livestock management, nutrition and sustainable agriculture."],"Creative Arts":["🎨","Develop creativity through art, music, drama, physical education and sports."],"Pre-Technical Studies":["⚙","Develop practical skills in technology, design, materials, tools and safety."],"Computer Studies":["</>","Learn computer basics, digital literacy, internet safety and essential technology skills."]};
-function closeModal()
-{
-  modalOverlay.classList.remove("show");document.body.style.overflow=""
-}
-   modalOverlay?.querySelectorAll("button").forEach(button=>{
-    if(button.textContent.trim()==="×"){
-        button.addEventListener("click",closeModal);
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================
+       MOBILE MENU
+    ========================= */
+    const menuToggle = document.getElementById("menuToggle");
+    const navbar = document.getElementById("navbar");
+
+    if (menuToggle && navbar) {
+        menuToggle.addEventListener("click", () => {
+            navbar.classList.toggle("open");
+        });
+
+        document.querySelectorAll(".nav-link, .nav-contact").forEach(link => {
+            link.addEventListener("click", () => {
+                navbar.classList.remove("open");
+            });
+        });
     }
-});                                              
- document.querySelectorAll(".subject-btn").forEach(b=>b.addEventListener("click",()=>{const d=data[b.dataset.subject];if(!d)return;modalTitle.textContent=b.dataset.subject;modalText.textContent=d[1];modalIcon.textContent=d[0];modalOverlay.classList.add("show");document.body.style.overflow="hidden"}));modalClose.addEventListener("click",closeModal);modalOverlay.addEventListener("click",e=>{if(e.target===modalOverlay)closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});modalResources.addEventListener("click",()=>{closeModal();document.getElementById("resources").scrollIntoView({behavior:"smooth"})});modalExam.addEventListener("click",()=>{closeModal();document.getElementById("exams").scrollIntoView({behavior:"smooth"})});
-document.querySelectorAll(".exam-btn").forEach(b=>b.addEventListener("click",()=>showNotification(`${b.dataset.exam} will open here when the online examination system is connected.`)));
-const rf=document.getElementById("resultsForm"),rm=document.getElementById("resultMessage");if(rf)rf.addEventListener("submit",e=>{e.preventDefault();const n=document.getElementById("studentNumber").value.trim(),g=document.getElementById("studentGrade").value;if(!n||!g){rm.style.display="block";rm.style.background="#fef2f2";rm.style.color="#991b1b";rm.textContent="Please enter your student number and select your grade.";return}rm.style.display="block";rm.style.background="#f0fdf4";rm.style.color="#166534";rm.innerHTML=`<strong>Request received.</strong><br>Student: ${escapeHTML(n)}<br>Grade: ${escapeHTML(g)}<br><br>Your results system is ready to be connected to the school's student database.`});
-const cf=document.getElementById("contactForm"),cm=document.getElementById("contactMessage");if(cf)cf.addEventListener("submit",e=>{e.preventDefault();const n=document.getElementById("name").value.trim();cm.style.marginTop="15px";cm.style.padding="10px";cm.style.borderRadius="8px";cm.style.background="#f0fdf4";cm.style.color="#166534";cm.style.fontSize="11px";cm.textContent=`Thank you, ${n}. Your message has been received.`;cf.reset()});
-document.getElementById("loadSubjects")?.addEventListener("click",()=>showNotification("More JSS subjects can be added here as the school curriculum is expanded."));document.getElementById("currentYear").textContent=new Date().getFullYear();
-function formatGrade(v){return({grade7:"Grade 7",grade8:"Grade 8",grade9:"Grade 9"})[v]||"JSS"}function escapeHTML(v){return v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function showNotification(message){document.querySelector(".site-notification")?.remove();const n=document.createElement("div");n.className="site-notification";n.textContent=message;Object.assign(n.style,{position:"fixed",right:"20px",bottom:"20px",zIndex:"3000",maxWidth:"360px",padding:"15px 18px",borderRadius:"10px",background:"#0f172a",color:"#fff",boxShadow:"0 15px 35px rgba(0,0,0,.2)",fontSize:"12px",lineHeight:"1.5",transform:"translateY(20px)",opacity:"0",transition:"all .3s ease"});document.body.appendChild(n);requestAnimationFrame(()=>{n.style.transform="translateY(0)";n.style.opacity="1"});setTimeout(()=>{n.style.opacity="0";n.style.transform="translateY(20px)";setTimeout(()=>n.remove(),300)},3500)}});
-/* GRADE 7 STUDENT LOGIN / SESSION */
-const G7_SESSION_KEY="arablow_g7_student";
-function getG7Student(){try{return JSON.parse(localStorage.getItem(G7_SESSION_KEY)||"null")}catch(e){return null}}
-function saveG7Student(student){localStorage.setItem(G7_SESSION_KEY,JSON.stringify(student))}
-function logoutG7(){localStorage.removeItem(G7_SESSION_KEY);location.href="grade7-login.html"}
+
+
+    /* =========================
+       ACTIVE NAVIGATION
+    ========================= */
+    const sections = document.querySelectorAll("main section[id]");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    function updateNav() {
+        let current = "home";
+
+        sections.forEach(section => {
+            if (window.scrollY >= section.offsetTop - 150) {
+                current = section.id;
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.toggle(
+                "active",
+                link.getAttribute("href") === `#${current}`
+            );
+        });
+    }
+
+    window.addEventListener("scroll", updateNav);
+    updateNav();
+
+
+    /* =========================
+       GRADE BUTTONS
+    ========================= */
+    const gradeButtons = document.querySelectorAll(".grade-btn");
+
+    gradeButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            gradeButtons.forEach(item => {
+                item.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            showNotification(
+                `${formatGrade(button.dataset.grade)} subjects selected.`
+            );
+        });
+    });
+
+
+    /* =========================
+       SUBJECT MODAL
+    ========================= */
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const modalIcon = document.getElementById("modalIcon");
+    const modalResources = document.getElementById("modalResources");
+    const modalExam = document.getElementById("modalExam");
+
+    const subjectData = {
+        "Mathematics": [
+            "∑",
+            "Study numbers, algebra, geometry, measurement, statistics and mathematical problem solving."
+        ],
+
+        "English": [
+            "A",
+            "Improve grammar, comprehension, writing, oral communication and literature skills."
+        ],
+
+        "Kiswahili": [
+            "K",
+            "Jifunze sarufi, kusoma, kuandika, kuzungumza, fasihi na matumizi bora ya Kiswahili."
+        ],
+
+        "Integrated Science": [
+            "⚗",
+            "Explore living things, matter, energy, health, environment and scientific investigations."
+        ],
+
+        "Social Studies": [
+            "🌍",
+            "Learn about geography, history, citizenship, culture and society."
+        ],
+
+        "CRE": [
+            "✦",
+            "Explore Christian religious education, biblical teachings, values and responsible citizenship."
+        ],
+
+        "Agriculture": [
+            "🌱",
+            "Learn crop production, livestock management, nutrition and sustainable agriculture."
+        ],
+
+        "Creative Arts": [
+            "🎨",
+            "Develop creativity through art, music, drama, physical education and sports."
+        ],
+
+        "Pre-Technical Studies": [
+            "⚙",
+            "Develop practical skills in technology, design, materials, tools and safety."
+        ],
+
+        "Computer Studies": [
+            "</>",
+            "Learn computer basics, digital literacy, internet safety and essential technology skills."
+        ]
+    };
+
+
+    /* =========================
+       CLOSE MODAL
+       ONE CENTRAL FUNCTION
+    ========================= */
+    function closeModal() {
+        if (!modalOverlay) return;
+
+        modalOverlay.classList.remove("show");
+        modalOverlay.style.display = "";
+
+        document.body.style.overflow = "";
+    }
+
+
+    /* =========================
+       OPEN SUBJECT MODAL
+    ========================= */
+    document.querySelectorAll(".subject-btn").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const subject = button.dataset.subject;
+            const data = subjectData[subject];
+
+            if (!data || !modalOverlay) return;
+
+            if (modalTitle) {
+                modalTitle.textContent = subject;
+            }
+
+            if (modalText) {
+                modalText.textContent = data[1];
+            }
+
+            if (modalIcon) {
+                modalIcon.textContent = data[0];
+            }
+
+            modalOverlay.classList.add("show");
+            modalOverlay.style.display = "flex";
+
+            document.body.style.overflow = "hidden";
+        });
+
+    });
+
+
+    /* =========================
+       MODAL CLOSE BUTTON
+       EVENT DELEGATION
+       =========================
+       This works even if the
+       button markup changes.
+    ========================= */
+    document.addEventListener("click", event => {
+
+        const closeButton = event.target.closest(
+            "#modalClose, .modal-close, [aria-label='Close'], [aria-label='close']"
+        );
+
+        if (closeButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeModal();
+        }
+
+    });
+
+
+    /* =========================
+       CLICK OUTSIDE MODAL
+    ========================= */
+    if (modalOverlay) {
+
+        modalOverlay.addEventListener("click", event => {
+
+            if (event.target === modalOverlay) {
+                closeModal();
+            }
+
+        });
+
+    }
+
+
+    /* =========================
+       ESC KEY CLOSE
+    ========================= */
+    document.addEventListener("keydown", event => {
+
+        if (event.key === "Escape") {
+            closeModal();
+        }
+
+    });
+
+
+    /* =========================
+       LEARNING RESOURCES BUTTON
+    ========================= */
+    if (modalResources) {
+
+        modalResources.addEventListener("click", () => {
+
+            closeModal();
+
+            document
+                .getElementById("resources")
+                ?.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        });
+
+    }
+
+
+    /* =========================
+       ONLINE EXAMS BUTTON
+    ========================= */
+    if (modalExam) {
+
+        modalExam.addEventListener("click", () => {
+
+            closeModal();
+
+            document
+                .getElementById("exams")
+                ?.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        });
+
+    }
+
+
+    /* =========================
+       EXAM BUTTONS
+    ========================= */
+    document.querySelectorAll(".exam-btn").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            showNotification(
+                `${button.dataset.exam} will open here when the online examination system is connected.`
+            );
+
+        });
+
+    });
+
+
+    /* =========================
+       RESULTS FORM
+    ========================= */
+    const resultsForm = document.getElementById("resultsForm");
+    const resultMessage = document.getElementById("resultMessage");
+
+    if (resultsForm) {
+
+        resultsForm.addEventListener("submit", event => {
+
+            event.preventDefault();
+
+            const studentNumber =
+                document.getElementById("studentNumber")?.value.trim();
+
+            const studentGrade =
+                document.getElementById("studentGrade")?.value;
+
+            if (!studentNumber || !studentGrade) {
+
+                if (resultMessage) {
+
+                    resultMessage.style.display = "block";
+                    resultMessage.style.background = "#fef2f2";
+                    resultMessage.style.color = "#991b1b";
+
+                    resultMessage.textContent =
+                        "Please enter your student number and select your grade.";
+                }
+
+                return;
+            }
+
+            if (resultMessage) {
+
+                resultMessage.style.display = "block";
+                resultMessage.style.background = "#f0fdf4";
+                resultMessage.style.color = "#166534";
+
+                resultMessage.innerHTML =
+                    `<strong>Request received.</strong><br>
+                    Student: ${escapeHTML(studentNumber)}<br>
+                    Grade: ${escapeHTML(studentGrade)}<br><br>
+                    Your results system is ready to be connected to the school's student database.`;
+            }
+
+        });
+
+    }
+
+
+    /* =========================
+       CONTACT FORM
+    ========================= */
+    const contactForm = document.getElementById("contactForm");
+    const contactMessage = document.getElementById("contactMessage");
+
+    if (contactForm) {
+
+        contactForm.addEventListener("submit", event => {
+
+            event.preventDefault();
+
+            const name =
+                document.getElementById("name")?.value.trim() || "Student";
+
+            if (contactMessage) {
+
+                contactMessage.style.marginTop = "15px";
+                contactMessage.style.padding = "10px";
+                contactMessage.style.borderRadius = "8px";
+                contactMessage.style.background = "#f0fdf4";
+                contactMessage.style.color = "#166534";
+                contactMessage.style.fontSize = "11px";
+
+                contactMessage.textContent =
+                    `Thank you, ${name}. Your message has been received.`;
+            }
+
+            contactForm.reset();
+
+        });
+
+    }
+
+
+    /* =========================
+       LOAD SUBJECTS
+    ========================= */
+    document
+        .getElementById("loadSubjects")
+        ?.addEventListener("click", () => {
+
+            showNotification(
+                "More JSS subjects can be added here as the school curriculum is expanded."
+            );
+
+        });
+
+
+    /* =========================
+       CURRENT YEAR
+    ========================= */
+    const currentYear = document.getElementById("currentYear");
+
+    if (currentYear) {
+        currentYear.textContent = new Date().getFullYear();
+    }
+
+
+    /* =========================
+       HELPER FUNCTIONS
+    ========================= */
+
+    function formatGrade(value) {
+
+        return {
+            grade7: "Grade 7",
+            grade8: "Grade 8",
+            grade9: "Grade 9"
+        }[value] || "JSS";
+
+    }
+
+
+    function escapeHTML(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    function showNotification(message) {
+
+        document
+            .querySelector(".site-notification")
+            ?.remove();
+
+        const notification = document.createElement("div");
+
+        notification.className = "site-notification";
+
+        notification.textContent = message;
+
+        Object.assign(notification.style, {
+
+            position: "fixed",
+            right: "20px",
+            bottom: "20px",
+            zIndex: "3000",
+            maxWidth: "360px",
+            padding: "15px 18px",
+            borderRadius: "10px",
+            background: "#0f172a",
+            color: "#fff",
+            boxShadow: "0 15px 35px rgba(0,0,0,.2)",
+            fontSize: "12px",
+            lineHeight: "1.5",
+            transform: "translateY(20px)",
+            opacity: "0",
+            transition: "all .3s ease"
+
+        });
+
+        document.body.appendChild(notification);
+
+        requestAnimationFrame(() => {
+
+            notification.style.transform = "translateY(0)";
+            notification.style.opacity = "1";
+
+        });
+
+        setTimeout(() => {
+
+            notification.style.opacity = "0";
+            notification.style.transform = "translateY(20px)";
+
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+
+        }, 3500);
+
+    }
+
+});
+
+
+/* ==================================
+   GRADE 7 STUDENT LOGIN / SESSION
+================================== */
+
+const G7_SESSION_KEY = "arablow_g7_student";
+
+
+function getG7Student() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(G7_SESSION_KEY) || "null"
+        );
+
+    } catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+function saveG7Student(student) {
+
+    localStorage.setItem(
+        G7_SESSION_KEY,
+        JSON.stringify(student)
+    );
+
+}
+
+
+function logoutG7() {
+
+    localStorage.removeItem(G7_SESSION_KEY);
+
+    location.href = "grade7-login.html";
+
+}
