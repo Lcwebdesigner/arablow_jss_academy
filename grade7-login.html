@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Grade 7 student login portal for Arablow Junior School. Access learning resources, online examinations and results.">
+<meta name="theme-color" content="#075985">
+<title>Grade 7 Student Portal | Arablow JSS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="student-page">
+    <div class="student-shell">
+
+        <header class="student-header">
+            <a href="index.html" class="student-brand" aria-label="Arablow Junior School home">
+                <div class="logo-icon">A</div>
+                <div>
+                    <strong>ARABLOW JUNIOR SCHOOL</strong>
+                    <span>GRADE 7 STUDENT PORTAL</span>
+                </div>
+            </a>
+
+            <div class="student-header-actions">
+                <a href="register.html" class="portal-mini-link portal-mini-register">Register</a>
+                <a href="admin-login.html" class="portal-mini-link portal-mini-admin">Staff / Admin</a>
+                <a href="index.html" class="g7-link">← Back to website</a>
+            </div>
+        </header>
+
+        <section class="student-card">
+            <div class="login-grid">
+
+                <section class="login-intro">
+                    <span class="section-label light">GRADE 7 • JSS STUDENT PORTAL</span>
+                    <div class="portal-welcome-badge">🎓 LEARN • PRACTISE • EXCEL</div>
+                    <h1>Welcome to your Grade 7 learning portal.</h1>
+                    <p>
+                        Sign in to access Grade 7 subjects, learning resources,
+                        online examinations and your saved examination results.
+                    </p>
+
+                    <div class="login-list">
+                        <div><span>✓</span> Grade 7 curriculum learning area</div>
+                        <div><span>✓</span> Mathematics, English, Kiswahili &amp; more</div>
+                        <div><span>✓</span> Online examinations and practice</div>
+                        <div><span>✓</span> Personal progress and examination results</div>
+                    </div>
+
+                    <div class="portal-help-box">
+                        <strong>New student?</strong>
+                        <span>Create your student account before signing in.</span>
+                        <a href="register.html">Create Student Account →</a>
+                    </div>
+                </section>
+
+                <section class="login-form-card">
+                    <div class="form-card-icon">🔐</div>
+                    <span class="form-eyebrow">STUDENT ACCESS</span>
+                    <h2>Grade 7 Student Login</h2>
+                    <p>Enter your student number and password to continue to the learning portal.</p>
+
+                    <div class="login-error" id="loginError" role="alert"></div>
+
+                    <form id="loginForm" novalidate>
+                        <div class="student-field">
+                            <label for="studentNumber">Student Number</label>
+                            <div class="input-wrap">
+                                <span aria-hidden="true">🎓</span>
+                                <input id="studentNumber" type="text" placeholder="e.g. G7-001" autocomplete="username" required>
+                            </div>
+                        </div>
+
+                        <div class="student-field">
+                            <label for="studentPassword">Password</label>
+                            <div class="input-wrap">
+                                <span aria-hidden="true">🔑</span>
+                                <input id="studentPassword" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary full-width login-submit">
+                            <span>Login to Grade 7</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </form>
+
+                    <div class="login-divider"><span>Student Portal</span></div>
+
+                    <div class="login-footer-actions">
+                        <a href="register.html">New student? <strong>Register here</strong></a>
+                        <a href="admin-login.html">Staff / Admin Login</a>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <footer class="student-footer">
+            <span>© 2026 Arablow Junior School</span>
+            <span>Secure Grade 7 Learning Portal</span>
+            <a href="index.html">Back to School Website</a>
+        </footer>
+
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* =========================================================
+   SUPABASE CONFIGURATION
+   ========================================================= */
+const SUPABASE_URL = "https://fyxtkccojxbucbkvvzss.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const G7_SESSION_KEY = "arablow_g7_student";
+
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+const loginButton = loginForm.querySelector("button[type=submit]");
+
+function showLoginError(message){
+    loginError.textContent = message;
+    loginError.style.display = "block";
+}
+
+/* If already logged in locally, continue to the exam. */
+if(localStorage.getItem("arablow_user")){
+    location.href = "exam.html";
+}
+
+loginForm.addEventListener("submit", async function(e){
+    e.preventDefault();
+    loginError.style.display = "none";
+    loginError.textContent = "";
+
+    const admissionNo = document.getElementById("studentNumber").value.trim().toUpperCase();
+    const password = document.getElementById("studentPassword").value;
+
+    if(!admissionNo || !password){
+        showLoginError("Please enter your student number and password.");
+        return;
+    }
+
+    loginButton.disabled = true;
+    loginButton.innerHTML = '<span>Signing in...</span><span aria-hidden="true">↗</span>';
+
+    try{
+        const { data: student, error: studentError } = await supabaseClient
+            .from("students")
+            .select("email, full_name, admission_no, class")
+            .eq("admission_no", admissionNo)
+            .maybeSingle();
+
+        if(studentError) throw studentError;
+        if(!student){
+            throw new Error("Student number not found. Please check your admission number.");
+        }
+        if(student.class !== "Grade 7"){
+            throw new Error("This account is not registered for Grade 7.");
+        }
+
+        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+            email: student.email,
+            password: password
+        });
+
+        if(authError) throw new Error("Invalid student number or password.");
+        if(!authData.session) throw new Error("Login could not be completed. Please try again.");
+
+        localStorage.setItem("arablow_user", student.admission_no);
+        localStorage.setItem("arablow_name", student.full_name);
+        localStorage.setItem("arablow_auth_user_id", authData.user.id);
+        localStorage.setItem(G7_SESSION_KEY, JSON.stringify({
+            studentNumber: student.admission_no,
+            name: student.full_name,
+            grade: "Grade 7",
+            loginAt: new Date().toISOString()
+        }));
+
+        location.href = "exam.html";
+    }catch(error){
+        console.error(error);
+        showLoginError(error.message || "Login failed. Please try again.");
+    }finally{
+        loginButton.disabled = false;
+        loginButton.innerHTML = '<span>Login to Grade 7</span><span aria-hidden="true">→</span>';
+    }
+});
+</script>
+</body>
+</html>
