@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Login | Arablow JSS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#075985;--primary-dark:#053f5c;--light:#f8fafc;--dark:#0f172a;--text:#334155;--muted:#64748b;--border:#e2e8f0;--danger:#991b1b;--danger-bg:#fef2f2}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;background:var(--light);color:var(--text);min-height:100vh}.page{min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(440px,100%);background:#fff;border:1px solid var(--border);border-radius:18px;padding:30px;box-shadow:0 12px 35px rgba(15,23,42,.09)}.brand{display:flex;align-items:center;gap:12px;margin-bottom:25px}.logo{width:45px;height:45px;display:grid;place-items:center;border-radius:11px;background:var(--primary);color:#fff;font:800 22px Poppins}.brand strong{display:block;color:var(--dark);font:700 16px Poppins}.brand span{display:block;margin-top:2px;color:var(--primary);font-size:9px;font-weight:800;letter-spacing:1px}.label{display:inline-block;color:var(--primary);font-size:10px;font-weight:800;letter-spacing:1.4px;margin-bottom:8px}.card h1{font:700 28px Poppins;color:var(--dark);line-height:1.2}.intro{margin:7px 0 22px;color:var(--muted);font-size:12px;line-height:1.7}.field{margin-bottom:16px}.field label{display:block;margin-bottom:6px;color:var(--dark);font-size:11px;font-weight:700}.field input{width:100%;height:46px;padding:0 13px;border:1px solid var(--border);border-radius:8px;outline:0;font-size:12px}.field input:focus{border-color:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}.btn{width:100%;height:46px;border:0;border-radius:8px;background:var(--primary);color:#fff;font-size:12px;font-weight:800}.btn:disabled{opacity:.65}.message{display:none;margin-bottom:15px;padding:11px;border-radius:8px;font-size:11px;line-height:1.5}.error{background:var(--danger-bg);color:var(--danger)}.back{display:block;margin-top:18px;text-align:center;color:var(--primary);font-size:11px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="page"><main class="card">
+<div class="brand"><div class="logo">A</div><div><strong>ARABLOW JUNIOR SCHOOL</strong><span>TEACHER / ADMIN PORTAL</span></div></div>
+<span class="label">STAFF ACCESS</span>
+<h1>Teacher Login</h1>
+<p class="intro">Sign in with the teacher account created in Supabase Authentication.</p>
+<div id="message" class="message error"></div>
+<form id="adminLoginForm">
+<div class="field"><label for="email">Teacher Email</label><input id="email" type="email" autocomplete="username" required></div>
+<div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+<button class="btn" id="loginBtn" type="submit">Login to Teacher Portal</button>
+</form>
+<a class="back" href="index.html">← Back to main website</a>
+</main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://fyxtkccojxbucbkvvzss.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const form=document.getElementById("adminLoginForm"),message=document.getElementById("message"),btn=document.getElementById("loginBtn");
+function showError(text){message.textContent=text;message.style.display="block"}
+async function checkExisting(){
+ const {data:{session}}=await supabaseClient.auth.getSession();
+ if(!session?.user)return;
+ const {data:admin}=await supabaseClient.from("admin_profiles").select("full_name,role").eq("auth_user_id",session.user.id).maybeSingle();
+ if(admin)location.replace("admin.html");
+}
+checkExisting();
+form.addEventListener("submit",async e=>{
+ e.preventDefault();message.style.display="none";btn.disabled=true;btn.textContent="Signing in...";
+ const email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
+ const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+ if(error){showError(error.message||"Unable to sign in.");btn.disabled=false;btn.textContent="Login to Teacher Portal";return}
+ const {data:admin,error:adminError}=await supabaseClient.from("admin_profiles").select("full_name,role").eq("auth_user_id",data.user.id).maybeSingle();
+ if(adminError||!admin){await supabaseClient.auth.signOut();showError("This account is not authorized as a teacher/admin.");btn.disabled=false;btn.textContent="Login to Teacher Portal";return}
+ location.replace("admin.html");
+});
+</script>
+</body>
+</html>

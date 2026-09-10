@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Grade 7 student dashboard for Arablow Junior School.">
+<title>Grade 7 Student Dashboard | Arablow JSS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>html,body{background:#f8fafc!important;color:#334155}.student-page{display:block!important;visibility:visible!important;opacity:1!important}.dashboard-status{margin:0 0 20px;padding:12px 14px;border-radius:9px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-size:11px}.dashboard-status.error{background:#fef2f2;border-color:#fecaca;color:#991b1b}.result-row{padding:13px 0;border-bottom:1px solid #e2e8f0}.result-row:last-child{border-bottom:0}.result-subject{color:#0f172a;font-size:12px;font-weight:800}.result-meta{color:#64748b;font-size:10px}</style>
+</head>
+<body>
+<div class="student-page">
+<div class="student-shell">
+<div class="student-header">
+<a href="index.html" class="student-brand"><div class="logo-icon">A</div><div><strong>ARABLOW JUNIOR SCHOOL</strong><span>GRADE 7 STUDENT PORTAL</span></div></a>
+<div class="student-top-actions"><a href="index.html">Main Website</a><button class="student-logout" id="logoutBtn">Logout</button></div>
+</div>
+
+<section class="dashboard-welcome">
+<span class="section-label light">GRADE 7 DASHBOARD</span>
+<h1>Welcome, <span id="studentName">Student</span>!</h1>
+<p>Student Number: <strong id="studentNumber">—</strong> • Grade: <strong>Grade 7</strong></p>
+</section>
+
+<div id="dashboardStatus" class="dashboard-status">Loading your student account and results...</div>
+
+<div class="dashboard-grid">
+<section class="dashboard-panel">
+<h2>Grade 7 Subjects</h2>
+<div class="g7-subject-list">
+<div class="g7-subject"><div><strong>Mathematics</strong><span>Numbers, algebra, geometry & problem solving</span></div><a class="g7-link" href="exam.html?subject=Mathematics&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>English</strong><span>Grammar, comprehension & writing</span></div><a class="g7-link" href="exam.html?subject=English&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>Kiswahili</strong><span>Sarufi, kusoma, kuandika & fasihi</span></div><a class="g7-link" href="exam.html?subject=Kiswahili&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>Integrated Science</strong><span>Living things, matter, energy & health</span></div><a class="g7-link" href="exam.html?subject=Integrated%20Science&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>Social Studies</strong><span>Geography, history, citizenship & society</span></div><a class="g7-link" href="exam.html?subject=Social%20Studies&grade=Grade%207">Exam →</a></div>
+<div class="g7-subject"><div><strong>CRE / Religious Education</strong><span>Values, biblical teachings & citizenship</span></div><a class="g7-link" href="exam.html?subject=CRE&grade=Grade%207">Exam →</a></div>
+</div>
+</section>
+
+<section class="dashboard-panel">
+<h2>My Examination Results</h2>
+<div id="resultsList" class="result-empty">Loading results...</div>
+<div class="dashboard-actions" style="margin-top:16px"><a class="btn btn-primary" href="exam.html?subject=Mathematics&grade=Grade%207">Take Mathematics Exam</a><a class="btn btn-outline" href="index.html#resources">Learning Resources</a></div>
+</section>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://fyxtkccojxbucbkvvzss.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+function clearStudentStorage(){["arablow_user","arablow_name","arablow_auth_user_id","arablow_g7_student"].forEach(k=>localStorage.removeItem(k));}
+function showError(message){$("dashboardStatus").textContent=message;$("dashboardStatus").className="dashboard-status error";}
+async function loadDashboard(){
+ try{
+  const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError)throw sessionError;
+  if(!session?.user){clearStudentStorage();location.replace("login.html");return;}
+
+  const {data:student,error:studentError}=await supabaseClient.from("students").select("full_name,admission_no,class").eq("auth_user_id",session.user.id).maybeSingle();
+  if(studentError)throw studentError;
+  if(!student||student.class!=="Grade 7"){await supabaseClient.auth.signOut();clearStudentStorage();location.replace("login.html");return;}
+
+  $("studentName").textContent=student.full_name||"Student";
+  $("studentNumber").textContent=student.admission_no||"—";
+  localStorage.setItem("arablow_user",student.admission_no);
+  localStorage.setItem("arablow_name",student.full_name||"Student");
+  localStorage.setItem("arablow_auth_user_id",session.user.id);
+  $("dashboardStatus").textContent="Account verified. Your examination results are shown below.";
+
+  const {data:results,error:resultsError}=await supabaseClient.from("exam_results").select("subject,score,total_questions,percentage,created_at").eq("student_auth_id",session.user.id).order("created_at",{ascending:false});
+  if(resultsError)throw resultsError;
+  const box=$("resultsList");
+  if(!results?.length){box.className="result-empty";box.textContent="No Grade 7 examination has been completed yet. Start a subject examination to see your score here.";return;}
+  box.className="";
+  box.innerHTML=results.map(r=>`<div class="result-row"><div class="result-subject">${escapeHtml(r.subject)}</div><div class="result-meta">Score: ${escapeHtml(r.score)}/${escapeHtml(r.total_questions)} • ${escapeHtml(r.percentage)}% • ${new Date(r.created_at).toLocaleString()}</div></div>`).join("");
+ }catch(error){console.error("Dashboard error:",error);showError("Could not load your dashboard. Please refresh the page. Details: "+(error.message||"Unknown error"));$("resultsList").textContent="Results could not be loaded.";}
+}
+function escapeHtml(value){return String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+$("logoutBtn").addEventListener("click",async()=>{await supabaseClient.auth.signOut();clearStudentStorage();location.replace("login.html")});
+loadDashboard();
+</script>
+</body>
+</html>
