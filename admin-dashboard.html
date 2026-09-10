@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Arablow JSS Academy staff dashboard.">
+<title>Admin Dashboard | Arablow JSS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.admin-dashboard{max-width:1180px;margin:0 auto;padding:28px 20px 50px}
+.admin-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+.admin-brand{display:flex;align-items:center;gap:10px}.admin-brand .logo-icon{background:#075985;color:#fff}
+.admin-brand strong{display:block;font-size:15px;color:var(--dark)}.admin-brand span{display:block;font-size:9px;color:#075985;font-weight:800;letter-spacing:1px}
+.admin-actions{display:flex;gap:8px;align-items:center}.admin-actions a,.admin-actions button{padding:9px 13px;border-radius:8px;font-size:10px;font-weight:800}.admin-actions a{background:#075985;color:#fff}.admin-actions button{border:1px solid var(--border);background:#fff;color:var(--text)}
+.admin-welcome{padding:28px;border-radius:18px;background:linear-gradient(135deg,#075985,#053f5c);color:#fff;margin-bottom:20px}.admin-welcome h1{font-family:Poppins,sans-serif;font-size:28px;margin:7px 0}.admin-welcome p{color:#dbeafe;font-size:12px}
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}.admin-stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px}.admin-stat span{display:block;color:var(--muted);font-size:10px;font-weight:700}.admin-stat strong{display:block;color:var(--dark);font-family:Poppins,sans-serif;font-size:28px;margin-top:4px}
+.admin-panel{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}.admin-panel h2{font-family:Poppins,sans-serif;font-size:18px;color:var(--dark);margin-bottom:14px}
+.admin-search{width:100%;height:44px;padding:0 12px;border:1px solid var(--border);border-radius:8px;outline:0;margin-bottom:14px}
+.admin-table-wrap{overflow-x:auto}.admin-table{width:100%;border-collapse:collapse;font-size:11px;min-width:760px}.admin-table th,.admin-table td{text-align:left;padding:11px 9px;border-bottom:1px solid #e2e8f0}.admin-table th{color:#475569;background:#f8fafc;font-size:10px}.admin-table td{color:#334155}
+.status{display:inline-block;padding:4px 7px;border-radius:20px;background:#e0f2fe;color:#075985;font-weight:700}
+.student-photo-thumb{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;background:#f1f5f9;vertical-align:middle}
+.student-photo-placeholder{display:inline-flex;width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;background:#e0f2fe;color:#075985;font-weight:800;font-size:12px;border:2px solid #e2e8f0;vertical-align:middle}
+.photo-cell{white-space:nowrap}.photo-upload{display:inline-flex;align-items:center;gap:7px}.photo-upload input{display:none}.photo-button{display:inline-block;padding:7px 9px;border-radius:7px;background:#075985;color:#fff;font-size:10px;font-weight:800;cursor:pointer}.photo-button.disabled{opacity:.6;pointer-events:none}.photo-status{display:block;margin-top:4px;font-size:9px;color:#64748b}
+.result-card{border-bottom:1px solid #e2e8f0;padding:12px 0}.result-card:last-child{border-bottom:0}.result-card strong{font-size:12px;color:var(--dark)}.result-card span{font-size:10px;color:var(--muted)}
+.empty{padding:14px;border-radius:9px;background:#f8fafc;color:var(--muted);font-size:11px}
+.admin-message{display:none;margin-bottom:14px;padding:11px;border-radius:8px;font-size:11px}.admin-message.success{background:#f0fdf4;color:#166534}.admin-message.error{background:#fef2f2;color:#991b1b}
+@media(max-width:760px){.admin-dashboard{padding:20px 14px}.admin-top{align-items:flex-start;flex-direction:column}.admin-actions{width:100%}.admin-actions a,.admin-actions button{flex:1;text-align:center}.admin-stats{grid-template-columns:1fr}.admin-welcome h1{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="admin-dashboard">
+<div class="admin-top">
+<a href="index.html" class="admin-brand"><div class="logo-icon">L</div><div><strong>ARABLOW JUNIOR SCHOOL</strong><span>STAFF PORTAL</span></div></a>
+<div class="admin-actions"><a href="index.html">Main Website</a><button id="logoutBtn">Logout</button></div>
+</div>
+
+<section class="admin-welcome">
+<span class="section-label light">ADMIN DASHBOARD</span>
+<h1>Welcome, <span id="adminName">Teacher</span></h1>
+<p>Role: <strong id="adminRole">teacher</strong> • Manage learners, photos and examination performance.</p>
+</section>
+
+<section class="admin-stats">
+<div class="admin-stat"><span>REGISTERED STUDENTS</span><strong id="studentCount">—</strong></div>
+<div class="admin-stat"><span>EXAM RESULTS</span><strong id="resultCount">—</strong></div>
+<div class="admin-stat"><span>AUTHORISED STAFF</span><strong>1</strong></div>
+</section>
+
+<section class="admin-panel">
+<h2>Grade 7 Students</h2>
+<p style="font-size:10px;color:#64748b;margin:-8px 0 12px">Upload or replace a learner's profile photo. JPG, PNG or WebP; maximum 5 MB.</p>
+<div id="adminMessage" class="admin-message"></div>
+<input id="studentSearch" class="admin-search" placeholder="Search by name, admission number or email...">
+<div class="admin-table-wrap">
+<table class="admin-table">
+<thead><tr><th>Photo</th><th>Name</th><th>Admission No.</th><th>Email</th><th>Class</th><th>Action</th></tr></thead>
+<tbody id="studentsBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+</table>
+</div>
+</section>
+
+<section class="admin-panel">
+<h2>Recent Examination Results</h2>
+<div id="resultsBox" class="empty">Loading...</div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://fyxtkccojxbucbkvvzss.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+
+let students=[];
+
+function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
+function initials(name){
+  const parts=String(name||"Student").trim().split(/\s+/).filter(Boolean);
+  return ((parts[0]?.[0]||"S")+(parts[1]?.[0]||"")).toUpperCase();
+}
+
+function showMessage(message,type="success"){
+  const box=document.getElementById("adminMessage");
+  box.textContent=message;
+  box.className="admin-message "+type;
+  box.style.display="block";
+  clearTimeout(window.messageTimer);
+  window.messageTimer=setTimeout(()=>box.style.display="none",5000);
+}
+
+async function init(){
+  const {data:{session},error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError||!session){location.replace("admin-login.html");return;}
+
+  const {data:profile,error:profileError}=await supabaseClient
+    .from("admin_profiles")
+    .select("full_name,role,is_admin")
+    .eq("auth_user_id",session.user.id)
+    .maybeSingle();
+
+  if(profileError||!profile||profile.is_admin!==true){
+    await supabaseClient.auth.signOut();
+    location.replace("admin-login.html");
+    return;
+  }
+
+  document.getElementById("adminName").textContent=profile.full_name;
+  document.getElementById("adminRole").textContent=profile.role;
+  await loadStudents();
+  await loadResults();
+}
+
+async function loadStudents(){
+  const {data,error}=await supabaseClient
+    .from("students")
+    .select("id,full_name,admission_no,email,class,photo_url")
+    .eq("class","Grade 7")
+    .order("full_name");
+
+  if(error){
+    console.error(error);
+    document.getElementById("studentsBody").innerHTML='<tr><td colspan="6">Unable to load students.</td></tr>';
+    return;
+  }
+
+  students=data||[];
+  document.getElementById("studentCount").textContent=students.length;
+  renderStudents(students);
+}
+
+function renderStudents(list){
+  document.getElementById("studentsBody").innerHTML=list.length?list.map(s=>{
+    const photo=s.photo_url
+      ? `<img class="student-photo-thumb" src="${esc(s.photo_url)}" alt="${esc(s.full_name)} photo">`
+      : `<span class="student-photo-placeholder">${esc(initials(s.full_name))}</span>`;
+
+    return `<tr>
+      <td class="photo-cell">${photo}</td>
+      <td><strong>${esc(s.full_name)}</strong></td>
+      <td><span class="status">${esc(s.admission_no)}</span></td>
+      <td>${esc(s.email)}</td>
+      <td>${esc(s.class)}</td>
+      <td>
+        <label class="photo-upload">
+          <span class="photo-button" id="photoButton-${s.id}">${s.photo_url?"Change Photo":"Upload Photo"}</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" data-student-id="${s.id}" data-admission="${esc(s.admission_no)}" onchange="uploadStudentPhoto(this)">
+        </label>
+        <span class="photo-status" id="photoStatus-${s.id}"></span>
+      </td>
+    </tr>`;
+  }).join(""):'<tr><td colspan="6">No students found.</td></tr>';
+}
+
+async function uploadStudentPhoto(input){
+  const file=input.files[0];
+  const studentId=input.dataset.studentId;
+  const admissionNo=input.dataset.admission;
+  if(!file)return;
+
+  const maxSize=5*1024*1024;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+    showMessage("Please choose a JPG, PNG or WebP image.","error");
+    input.value="";
+    return;
+  }
+  if(file.size>maxSize){
+    showMessage("The photo is too large. Maximum size is 5 MB.","error");
+    input.value="";
+    return;
+  }
+
+  const button=document.getElementById("photoButton-"+studentId);
+  const status=document.getElementById("photoStatus-"+studentId);
+  button.classList.add("disabled");
+  button.textContent="Uploading...";
+  status.textContent="";
+
+  try{
+    const extension=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+    const filePath=`${admissionNo}.${extension}`;
+
+    const {error:uploadError}=await supabaseClient.storage
+      .from("student-photos")
+      .upload(filePath,file,{upsert:true,contentType:file.type});
+
+    if(uploadError)throw uploadError;
+
+    const {data:publicData}=supabaseClient.storage
+      .from("student-photos")
+      .getPublicUrl(filePath);
+
+    const photoUrl=publicData.publicUrl;
+
+    const {error:updateError}=await supabaseClient
+      .from("students")
+      .update({photo_url:photoUrl})
+      .eq("id",studentId);
+
+    if(updateError)throw updateError;
+
+    const student=students.find(s=>String(s.id)===String(studentId));
+    if(student)student.photo_url=photoUrl;
+
+    renderStudents(students);
+    showMessage("Student photo uploaded successfully.","success");
+  }catch(error){
+    console.error(error);
+    showMessage(error.message||"Unable to upload the student photo.","error");
+    button.classList.remove("disabled");
+    button.textContent="Upload Photo";
+  }finally{
+    input.value="";
+  }
+}
+
+async function loadResults(){
+  const {data,error}=await supabaseClient
+    .from("exam_results")
+    .select("student_name,admission_no,subject,grade,score,total_questions,percentage,created_at")
+    .order("created_at",{ascending:false})
+    .limit(50);
+
+  if(error){
+    document.getElementById("resultsBox").textContent="Unable to load examination results.";
+    return;
+  }
+
+  document.getElementById("resultCount").textContent=(data||[]).length;
+  const box=document.getElementById("resultsBox");
+  if(!data||!data.length){
+    box.textContent="No examination results have been submitted yet.";
+    return;
+  }
+
+  box.className="";
+  box.innerHTML=data.map(r=>`<div class="result-card"><strong>${esc(r.student_name||r.admission_no)} — ${esc(r.subject)}</strong><br><span>${esc(r.admission_no)} • ${r.score}/${r.total_questions} (${r.percentage}%) • ${esc(r.grade)} • ${new Date(r.created_at).toLocaleDateString()}</span></div>`).join("");
+}
+
+document.getElementById("studentSearch").addEventListener("input",e=>{
+  const q=e.target.value.toLowerCase().trim();
+  renderStudents(students.filter(s=>[s.full_name,s.admission_no,s.email].join(" ").toLowerCase().includes(q)));
+});
+
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  ["arablow_admin_name","arablow_admin_role","arablow_admin_auth_user_id"].forEach(k=>localStorage.removeItem(k));
+  location.replace("admin-login.html");
+});
+
+init();
+</script>
+</body>
+</html>
