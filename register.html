@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Grade 7 student registration for Arablow Junior School.">
+<title>Grade 7 Student Registration | Arablow JSS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.register-page{min-height:100vh;background:#e0f2fe;padding:110px 0 60px}.register-shell{width:min(1050px,92%);margin:auto}.register-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:25px}.register-brand{display:flex;align-items:center;gap:12px}.register-brand .logo-icon{background:#075985;color:#fff}.register-brand strong{display:block;color:#0f172a;font-family:Poppins,sans-serif}.register-brand span{display:block;color:#075985;font-size:9px;font-weight:800;letter-spacing:1px}.register-link{color:#075985;font-size:10px;font-weight:800}.register-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 12px 35px rgba(15,23,42,.09);padding:32px}.register-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.register-intro{padding:35px;border-radius:18px;background:#075985;color:#fff}.register-intro h1{margin:8px 0 15px;font-family:Poppins,sans-serif;font-size:34px;line-height:1.2}.register-intro p{color:#e0f2fe;font-size:13px;line-height:1.8}.register-list{display:grid;gap:11px;margin-top:24px}.register-list div{font-size:12px;color:#e0f2fe}.register-form-card{padding:35px;border:1px solid #e2e8f0;border-radius:18px;background:#fff}.register-form-card h2{font-family:Poppins,sans-serif;color:#0f172a;font-size:24px}.register-form-card>p{margin:5px 0 20px;color:#64748b;font-size:12px}.register-field{margin-bottom:16px}.register-field label{display:block;margin-bottom:6px;color:#0f172a;font-size:11px;font-weight:700}.register-field input,.register-field select{width:100%;height:46px;padding:0 13px;border:1px solid #e2e8f0;border-radius:8px;outline:0;font-size:12px;background:#fff}.register-field input:focus,.register-field select:focus{border-color:#075985;box-shadow:0 0 0 3px #e0f2fe}.register-message{display:none;margin-bottom:15px;padding:11px;border-radius:8px;font-size:11px}.register-message.error{display:block;background:#fef2f2;color:#991b1b}.register-message.success{display:block;background:#f0fdf4;color:#166534}.register-login{margin-top:18px;text-align:center;color:#64748b;font-size:11px}.register-login a{color:#075985;font-weight:800}@media(max-width:800px){.register-grid{grid-template-columns:1fr}.register-header{align-items:flex-start;flex-direction:column}}@media(max-width:600px){.register-page{padding-top:95px}.register-card,.register-intro,.register-form-card{padding:22px}.register-intro h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="register-page"><div class="register-shell">
+<div class="register-header"><a href="index.html" class="register-brand"><div class="logo-icon">A</div><div><strong>ARABLOW JUNIOR SCHOOL</strong><span>GRADE 7 STUDENT PORTAL</span></div></a><a href="index.html" class="register-link">← Back to website</a></div>
+<div class="register-card"><div class="register-grid">
+<section class="register-intro"><span class="section-label light">GRADE 7 • JSS</span><h1>Create your student account.</h1><p>Register your Grade 7 student account to access online examinations, learning resources and your examination results.</p><div class="register-list"><div>✓ Grade 7 curriculum area</div><div>✓ Online examinations</div><div>✓ Saved examination results</div><div>✓ Personal student account</div></div></section>
+<section class="register-form-card"><h2>Student Registration</h2><p>Enter your details to create your Grade 7 account.</p><div id="registerMessage" class="register-message"></div>
+<form id="registerForm">
+<div class="register-field"><label for="fullName">Full Name</label><input id="fullName" type="text" placeholder="e.g. John Mwangi" autocomplete="name" required></div>
+<div class="register-field"><label for="admissionNo">Admission No</label><input id="admissionNo" type="text" placeholder="e.g. 07-001" autocomplete="off" required></div>
+<div class="register-field"><label for="email">Email</label><input id="email" type="email" placeholder="student@example.com" autocomplete="email" required></div>
+<div class="register-field"><label for="password">Password</label><input id="password" type="password" placeholder="Create a password" autocomplete="new-password" minlength="6" required></div>
+<div class="register-field"><label for="studentClass">Class</label><select id="studentClass" required><option value="Grade 7">Grade 7</option></select></div>
+<button type="submit" class="btn btn-primary full-width" id="registerButton">Create Account</button>
+</form>
+<div class="register-login">Already have an account? <a href="login.html">Login here →</a></div>
+</section></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const https://fyxtkccojxbucbkvvzss.supabase.co="https://fyxtkccojxbucbkvvzss.supabase.co";
+const sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm="sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm";
+const supabaseClient=window.supabase.createClient(https://fyxtkccojxbucbkvvzss.supabase.co,sb_publishable_TjVvQiZyWCc6MFkQB_isLQ_b3RaPItm);
+const form=document.getElementById("registerForm"),message=document.getElementById("registerMessage"),button=document.getElementById("registerButton");
+form.addEventListener("submit",async e=>{
+ e.preventDefault(); message.className="register-message"; message.textContent="";
+ const fullName=document.getElementById("fullName").value.trim();
+ const admissionNo=document.getElementById("admissionNo").value.trim().toUpperCase();
+ const email=document.getElementById("email").value.trim().toLowerCase();
+ const password=document.getElementById("password").value;
+ const studentClass=document.getElementById("studentClass").value;
+ if(!/^\d{2}-\d{3,}$/.test(admissionNo)){message.className="register-message error";message.textContent="Please use an admission number such as 07-001.";return;}
+ button.disabled=true;button.textContent="Creating Account...";
+ try{
+  const {data:existing,error:checkError}=await supabaseClient.from("students").select("id").eq("admission_no",admissionNo).maybeSingle();
+  if(checkError)throw checkError;if(existing)throw new Error("This admission number is already registered.");
+  const {data:authData,error:authError}=await supabaseClient.auth.signUp({email,password,options:{data:{full_name:fullName,admission_no:admissionNo,class:studentClass}}});
+  if(authError)throw authError;if(!authData.user)throw new Error("The account could not be created.");
+  const {error:insertError}=await supabaseClient.from("students").insert({auth_user_id:authData.user.id,full_name:fullName,admission_no:admissionNo,email,class:studentClass});
+  if(insertError)throw insertError;
+  message.className="register-message success";message.textContent="Registration successful. Redirecting to login...";
+  setTimeout(()=>location.href="login.html",1200);
+ }catch(error){console.error(error);message.className="register-message error";message.textContent=error.message||"Registration failed. Please try again.";}
+ finally{button.disabled=false;button.textContent="Create Account";}
+});
+</script>
+</body>
+</html>
