@@ -5,7 +5,11 @@ function closeModal()
 {
   modalOverlay.classList.remove("show");document.body.style.overflow=""
 }
-  document.getElementById("modalClose")?.addEventListener("click", closeModal);                                                
+   modalOverlay?.querySelectorAll("button").forEach(button=>{
+    if(button.textContent.trim()==="×"){
+        button.addEventListener("click",closeModal);
+    }
+});                                              
  document.querySelectorAll(".subject-btn").forEach(b=>b.addEventListener("click",()=>{const d=data[b.dataset.subject];if(!d)return;modalTitle.textContent=b.dataset.subject;modalText.textContent=d[1];modalIcon.textContent=d[0];modalOverlay.classList.add("show");document.body.style.overflow="hidden"}));modalClose.addEventListener("click",closeModal);modalOverlay.addEventListener("click",e=>{if(e.target===modalOverlay)closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});modalResources.addEventListener("click",()=>{closeModal();document.getElementById("resources").scrollIntoView({behavior:"smooth"})});modalExam.addEventListener("click",()=>{closeModal();document.getElementById("exams").scrollIntoView({behavior:"smooth"})});
 document.querySelectorAll(".exam-btn").forEach(b=>b.addEventListener("click",()=>showNotification(`${b.dataset.exam} will open here when the online examination system is connected.`)));
 const rf=document.getElementById("resultsForm"),rm=document.getElementById("resultMessage");if(rf)rf.addEventListener("submit",e=>{e.preventDefault();const n=document.getElementById("studentNumber").value.trim(),g=document.getElementById("studentGrade").value;if(!n||!g){rm.style.display="block";rm.style.background="#fef2f2";rm.style.color="#991b1b";rm.textContent="Please enter your student number and select your grade.";return}rm.style.display="block";rm.style.background="#f0fdf4";rm.style.color="#166534";rm.innerHTML=`<strong>Request received.</strong><br>Student: ${escapeHTML(n)}<br>Grade: ${escapeHTML(g)}<br><br>Your results system is ready to be connected to the school's student database.`});
