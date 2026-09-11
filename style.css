@@ -266,3 +266,10 @@
   .login-footer-actions{display:grid;gap:10px}
   .login-footer-actions a{text-align:center}
 }
+.school-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #fff;
+}
