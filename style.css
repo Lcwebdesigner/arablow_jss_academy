@@ -273,3 +273,9 @@
     border-radius: 10px;
     background: #fff;
 }
+@media (max-width: 480px) {
+    .school-logo {
+        width: 40px;
+        height: 40px;
+    }
+}
